@@ -44,7 +44,7 @@ jobs:
 
       - name: Create Frappe Bench
         run: |
-          bench init --skip-redis --frappe-branch ${{ secrets.CI_FRAPPE_VERSION }} ci-bench
+          bench init --frappe-branch ${{ secrets.CI_FRAPPE_VERSION }} ci-bench
           cd ci-bench
           bench get-app erpnext --branch ${{ secrets.CI_ERPNEXT_VERSION }} --resolve-deps
           bench new-site ${{ secrets.CI_FRAPPE_SITE_NAME }} \
