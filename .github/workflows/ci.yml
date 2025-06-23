@@ -8,10 +8,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    
     services:
-      mysql:
-        image: mysql:5.7
+      mariadb:
+        image: mariadb:10.6
         env:
           MYSQL_ROOT_PASSWORD: ${{ secrets.CI_MYSQL_ROOT_PASSWORD }}
           MYSQL_DATABASE: test
@@ -38,12 +38,14 @@ jobs:
       - name: Install Redis
         run: sudo apt-get update && sudo apt-get install -y redis-server
 
-      - name: Create Frappe Bench
+      - name: Create Frappe Bench and Setup Site
         run: |
           bench init --frappe-branch ${{ secrets.CI_FRAPPE_VERSION }} ci-bench
           cd ci-bench
           bench get-app erpnext --branch ${{ secrets.CI_ERPNEXT_VERSION }} --resolve-deps
-          bench new-site ${{ secrets.CI_FRAPPE_SITE_NAME }} --admin-password ${{ secrets.CI_ADMIN_PASSWORD }} --mariadb-root-password ${{ secrets.CI_MYSQL_ROOT_PASSWORD }}
+          bench new-site ${{ secrets.CI_FRAPPE_SITE_NAME }} \
+            --admin-password ${{ secrets.CI_ADMIN_PASSWORD }} \
+            --mariadb-root-password ${{ secrets.CI_MYSQL_ROOT_PASSWORD }}
           bench --site ${{ secrets.CI_FRAPPE_SITE_NAME }} install-app erpnext
           bench get-app my_custom_app https://github.com/anirudha16/my_custom_app.git
           bench --site ${{ secrets.CI_FRAPPE_SITE_NAME }} install-app my_custom_app
