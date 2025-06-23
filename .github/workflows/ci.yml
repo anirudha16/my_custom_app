@@ -41,8 +41,11 @@ jobs:
 
       - name: Install Frappe Bench
         run: pip install frappe-bench
+- name: Install Redis
+  run: sudo apt-get update && sudo apt-get install -y redis-server
 
-      - name: Create Frappe Bench
+- name: Create Frappe Bench
+  run: bench init --frappe-branch ${{ secrets.CI_FRAPPE_VERSION }} ci-bench      - name: Create Frappe Bench
         run: |
           bench init --frappe-branch ${{ secrets.CI_FRAPPE_VERSION }} ci-bench
           cd ci-bench
