@@ -6,6 +6,8 @@ setup(
     description='Custom app for Frappe',
     author='Your Name',
     author_email='your-email@example.com',
+    author='Anirudha Landage',
+    author_email='anirudhalandage16@gmail.com',
     packages=find_packages(),
     zip_safe=False,
     include_package_data=True,
