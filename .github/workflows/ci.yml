@@ -49,7 +49,7 @@ jobs:
           bench --site ${{ secrets.CI_FRAPPE_SITE_NAME }} install-app erpnext
           bench get-app my_custom_app https://github.com/anirudha16/my_custom_app.git
           bench --site ${{ secrets.CI_FRAPPE_SITE_NAME }} install-app my_custom_app
-=======
+
       - develop
   pull_request:
 
