@@ -1,0 +1,27 @@
+name: ERPNext Custom App CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🧰 Set Up Bench Environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl redis-server mariadb-client libmysqlclient-dev libffi-dev libssl-dev wkhtmltopdf xvfb libjpeg-dev python3-dev python3-pip
+          pip3 install frappe-bench
+          bench init ci-bench --frappe-branch version-15
+          cd ci-bench
+          bench get-app erpnext --branch version-15
+          bench get-app --branch main https://github.com/anirudha16/my_custom_app.git
+          bench new-site test.local --admin-password admin --mariadb-root-password root
+          bench --site test.local install-app erpnext
+          bench --site test.local install-app my_custom_app
+          bench --site test.local migrate
+          echo "✅ Site & App installed successfully"
