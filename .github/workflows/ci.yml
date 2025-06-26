@@ -98,3 +98,28 @@ jobs:
           bench --site test_site run-tests --app my_custom_app
         env:
           TYPE: server
+  deploy:
+    name: Deploy to Docker ERPNext
+    needs: tests
+    runs-on: self-hosted
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🚀 Copy updated app into Docker container
+        run: |
+          echo "Copying app to Docker container..."
+          docker cp ./my_custom_app pwd-backend-1:/home/frappe/frappe-bench/apps/my_custom_app
+
+      - name: 🔄 Migrate & Restart ERPNext (Site: frontend)
+        run: |
+          docker exec -u frappe pwd-backend-1 bash -c "
+            cd /home/frappe/frappe-bench &&
+            bench --site frontend migrate &&
+            bench restart
+          "
+
+      - name: ✅ Done
+        run: echo "🎉 Deployment completed to Docker (site: frontend)"
+
