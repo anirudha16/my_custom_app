@@ -98,10 +98,10 @@ jobs:
           bench --site test_site run-tests --app my_custom_app
         env:
           TYPE: server
-  deploy:
-    name: Deploy to Docker ERPNext
+deploy:
     needs: tests
     runs-on: self-hosted
+    name: Deploy to Docker ERPNext
 
     steps:
       - name: 📥 Checkout Code
@@ -122,4 +122,3 @@ jobs:
 
       - name: ✅ Done
         run: echo '🎉 Deployment completed to Docker (site: frontend)'
-
