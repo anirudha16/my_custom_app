@@ -12,10 +12,11 @@ concurrency:
 
 jobs:
   tests:
+    name: Server
     runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
-    name: Server
 
     services:
       redis-cache:
@@ -35,21 +36,21 @@ jobs:
         options: --health-cmd="mariadb-admin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
     steps:
-      - name: Checkout code
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: 🐍 Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Setup Node
+      - name: 🟦 Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
           check-latest: true
 
-      - name: Cache pip
+      - name: 💾 Cache pip
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
@@ -58,11 +59,11 @@ jobs:
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
 
-      - name: Get yarn cache directory path
+      - name: 📦 Get Yarn cache path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
 
-      - name: Cache Yarn
+      - name: 💾 Cache Yarn
         uses: actions/cache@v4
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -70,17 +71,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Install MariaDB Client
+      - name: 🛠️ Install MariaDB Client
         run: sudo apt-get update && sudo apt-get install -y mariadb-client
 
-      - name: Setup Bench
+      - name: 🧱 Setup Bench
         run: |
           pip install frappe-bench
           bench init --skip-redis-config-generation --skip-assets --python "$(which python)" ~/frappe-bench
           mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL character_set_server = 'utf8mb4'"
           mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL collation_server = 'utf8mb4_unicode_ci'"
 
-      - name: Install Apps and Setup Site
+      - name: 📦 Install Apps and Setup Site
         working-directory: /home/runner/frappe-bench
         run: |
           bench get-app my_custom_app $GITHUB_WORKSPACE
@@ -91,17 +92,18 @@ jobs:
         env:
           CI: 'Yes'
 
-      - name: Run Tests
+      - name: ✅ Run Tests
         working-directory: /home/runner/frappe-bench
         run: |
           bench --site test_site set-config allow_tests true
           bench --site test_site run-tests --app my_custom_app
         env:
           TYPE: server
-deploy:
+
+  deploy:
+    name: Deploy to Docker ERPNext
     needs: tests
     runs-on: self-hosted
-    name: Deploy to Docker ERPNext
 
     steps:
       - name: 📥 Checkout Code
@@ -112,7 +114,7 @@ deploy:
           echo "Copying app to Docker container..."
           docker cp ./my_custom_app pwd-backend-1:/home/frappe/frappe-bench/apps/my_custom_app
 
-      - name: 🔄 Migrate & Restart ERPNext 
+      - name: 🔄 Migrate & Restart ERPNext
         run: |
           docker exec -u frappe pwd-backend-1 bash -c "
             cd /home/frappe/frappe-bench &&
@@ -121,4 +123,5 @@ deploy:
           "
 
       - name: ✅ Done
-        run: echo '🎉 Deployment completed to Docker (site: frontend)'
+        run: |
+           echo " Deployment completed to Docker (site: frontend)"
