@@ -112,10 +112,9 @@ jobs:
           echo "Copying app to Docker container..."
           docker cp ./my_custom_app pwd-backend-1:/home/frappe/frappe-bench/apps/my_custom_app
 
-          - name: 🔄 Migrate & Restart ERPNext (Site: frontend)
-            run: |
-          docker exec -u frappe pwd-backend-1 bash -c 'cd /home/frappe/frappe-bench && bench --site frontend migrate && bench restart'
-
+      - name: 🔄 Migrate & Restart ERPNext (Site: frontend)
+        run: |
+          docker exec -u frappe pwd-backend-1 bash -c "
             cd /home/frappe/frappe-bench &&
             bench --site frontend migrate &&
             bench restart
@@ -123,3 +122,4 @@ jobs:
 
       - name: ✅ Done
         run: echo '🎉 Deployment completed to Docker (site: frontend)'
+
