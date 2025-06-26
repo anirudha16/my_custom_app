@@ -122,4 +122,4 @@ jobs:
           "
 
       - name: ✅ Done
-        run: 'echo "🎉 Deployment completed to Docker (site: frontend)"'
+        run: echo '🎉 Deployment completed to Docker (site: frontend)'
