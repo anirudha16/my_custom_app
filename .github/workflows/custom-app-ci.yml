@@ -31,7 +31,7 @@ jobs:
           bench get-app erpnext --branch version-15
           bench get-app --branch main https://github.com/anirudha16/my_custom_app.git
 
-      - name: 🌐 Create Site and Install Apps
+     - name: 🌐 Create Site and Install Apps
         run: |
           cd ci-bench
           bench new-site test.local --admin-password admin --mariadb-root-password root
@@ -45,6 +45,7 @@ jobs:
           nohup bench start > bench.log 2>&1 &
           sleep 30
           curl --fail http://localhost:8000 || (echo '❌ Site failed to start' && exit 1)
+
 
       - name: ✅ Done
         run: echo '🎉 Deployment completed to Docker (site: frontend)'
