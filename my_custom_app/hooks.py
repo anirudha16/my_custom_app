@@ -4,6 +4,9 @@ app_publisher = "ani"
 app_description = "custom"
 app_email = "anirudhalandage16@gmail.com"
 app_license = "mit"
+doctype_js = {
+    "Employee": "public/js/employee.js"
+}
 
 # Apps
 # ------------------
